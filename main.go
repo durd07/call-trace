@@ -21,7 +21,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/peer"
-	pb "github.com/durd07/call_trace"
+	pb "github.com/durd07/call-trace/call_trace"
 )
 
 var (
@@ -77,24 +77,24 @@ type server struct {
 	pb.UnimplementedCallTraceServer
 }
 
-func (s *server) shoudBeTraced(ctx context.Context, in string) (bool, error) {
+func (s *server) shoudBeTraced(ctx context.Context, in *pb.String) (*pb.Bool, error) {
 	p, _ := peer.FromContext(ctx)
-	logger.Infof("GRPC shoudBeTraced received from %s : %v", p.Addr.String(), in.Fqdn)
+	logger.Infof("GRPC shoudBeTraced received from %s : %v", p.Addr.String(), in.Value)
 
-	ret, _ := eng.MysqlConnection().Query("SELECT 1 FROM call_trace_config WHERE public_id=" + in)
-	if ret {
-		return true
+	ret, err := eng.MysqlConnection().Query("SELECT 1 FROM call_trace_config WHERE public_id=" + in.Value)
+	if ret != nil {
+		return &pb.Bool{Value: true}, err
 	} else {
-		return false
+		return &pb.Bool{Value: false}, err
 	}
 
 }
 
 func (s *server) trace(ctx context.Context, in *pb.CallTraceRequest) {
 	p, _ := peer.FromContext(ctx)
-	logger.Infof("GRPC trace received from %s : %v", p.Addr.String(), in.Fqdn)
+	logger.Infof("GRPC trace received from %s : %v", p.Addr.String(), in.Puid)
 
-	eng.MysqlConnection().Exec("INSERT INTO call_trace (public_id, message) VALUES ('%s', '%s')", in.puid, in.msg)
+	eng.MysqlConnection().Exec("INSERT INTO call_trace (public_id, message) VALUES ('%s', '%s')", in.Puid, in.Msg)
 
 }
 
@@ -105,11 +105,10 @@ func grpcServer() {
 	}
 	s := grpc.NewServer()
 	myserver := server{}
-	go myserver.Notify()
 
 	pb.RegisterCallTraceServer(s, &myserver)
 	if err := s.Serve(lis); err != nil {
-		klog.Fatalf("failed to serve: %v", err)
+		logger.Fatalf("failed to serve: %v", err)
 	}
 }
 
