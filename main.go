@@ -66,8 +66,8 @@ func httpServer() {
 
 	eng.HTML("GET", "/admin", datamodel.GetContent)
 	//eng.HTML("POST", "/admin/info/call_trace", datamodel.GetContent)
-	ret, _ := eng.MysqlConnection().Query("select * from call_trace")
-	fmt.Println(ret)
+	//ret, _ := eng.MysqlConnection().Query("select * from call_trace")
+	//fmt.Println(ret)
 
 	_ = r.Run(":9033")
 }
@@ -77,11 +77,12 @@ type server struct {
 	pb.UnimplementedCallTraceServer
 }
 
-func (s *server) shoudBeTraced(ctx context.Context, in *pb.String) (*pb.Bool, error) {
+func (s *server) ShoudBeTraced(ctx context.Context, in *pb.String) (*pb.Bool, error) {
 	p, _ := peer.FromContext(ctx)
 	logger.Infof("GRPC shoudBeTraced received from %s : %v", p.Addr.String(), in.Value)
 
-	ret, err := eng.MysqlConnection().Query("SELECT 1 FROM call_trace_config WHERE public_id=" + in.Value)
+	query := fmt.Sprintf("SELECT 1 FROM call_trace_config WHERE public_id='%s'", in.Value)
+	ret, err := eng.MysqlConnection().Query(query)
 	if ret != nil {
 		return &pb.Bool{Value: true}, err
 	} else {
@@ -90,12 +91,21 @@ func (s *server) shoudBeTraced(ctx context.Context, in *pb.String) (*pb.Bool, er
 
 }
 
-func (s *server) trace(ctx context.Context, in *pb.CallTraceRequest) {
+func (s *server) Trace(ctx context.Context, in *pb.CallTraceRequest) (*pb.Bool, error) {
 	p, _ := peer.FromContext(ctx)
 	logger.Infof("GRPC trace received from %s : %v", p.Addr.String(), in.Puid)
 
-	eng.MysqlConnection().Exec("INSERT INTO call_trace (public_id, message) VALUES ('%s', '%s')", in.Puid, in.Msg)
+	query := fmt.Sprintf("INSERT INTO call_trace (public_id, message) VALUES ('%s', '%s')", in.Puid, in.Msg)
 
+	ret, err := eng.MysqlConnection().Exec(query)
+
+	fmt.Printf("%v\n", ret)
+
+	if ret != nil {
+		return &pb.Bool{Value: true}, err
+	} else {
+		return &pb.Bool{Value: false}, err
+	}
 }
 
 func grpcServer() {

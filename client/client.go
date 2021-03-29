@@ -2,9 +2,10 @@ package main
 
 import (
 	"log"
+	"time"
 	"context"
 	pb "github.com/durd07/call-trace/call_trace"
-	"goolge.golang.org/grpc"
+	"google.golang.org/grpc"
 )
 
 const (
@@ -23,5 +24,19 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*100000)
 	defer cancel()
 
-	
+	ret, err := c.ShoudBeTraced(ctx, &pb.String{Value:"sip:felix.du@nokia-sbell.com"})
+	if err != nil {
+		log.Println("ShoudBeTraced failed", err)
+	}
+
+	log.Printf("received: ", ret.Value)
+
+	ret, err = c.Trace(ctx, &pb.CallTraceRequest{Puid: "sip:felix.du@nokia-sbell.com", Msg: "123456"})
+
+	if err != nil {
+		log.Println("Trace failed", err)
+	}
+
+	log.Printf("received: ", ret.Value)
+
 }
