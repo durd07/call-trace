@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option go_package = "github.com/durd07/call_trace";
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.tra";
+option java_outer_classname = "CallTraceProto";
+
+package envoy.extensions.filters.network.sip_proxy.v3;
+
+service CallTrace {
+	rpc shoudBeTraced(String) returns (Bool) {}
+	rpc watch(String) returns (stream WatchResponse) {}
+	rpc trace(CallTraceRequest) returns (Bool) {}
+}
+
+message String {
+	string value = 1;
+}
+
+message Bool {
+	bool value = 1;
+}
+
+message CallTraceRequest {
+	string puid = 1;
+	string msg = 2;
+}
+
+message WatchResponse {
+	repeated string puids = 1;
+}
