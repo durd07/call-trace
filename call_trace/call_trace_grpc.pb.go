@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CallTraceClient interface {
-	ShoudBeTraced(ctx context.Context, in *ShouldBeTracedRequest, opts ...grpc.CallOption) (*ShouldBeTracedResponse, error)
+	ShouldBeTraced(ctx context.Context, in *ShouldBeTracedRequest, opts ...grpc.CallOption) (*ShouldBeTracedResponse, error)
 	Watch(ctx context.Context, in *ShouldBeTracedRequest, opts ...grpc.CallOption) (CallTrace_WatchClient, error)
 	Trace(ctx context.Context, in *CallTraceRequest, opts ...grpc.CallOption) (*Bool, error)
 }
@@ -31,9 +31,9 @@ func NewCallTraceClient(cc grpc.ClientConnInterface) CallTraceClient {
 	return &callTraceClient{cc}
 }
 
-func (c *callTraceClient) ShoudBeTraced(ctx context.Context, in *ShouldBeTracedRequest, opts ...grpc.CallOption) (*ShouldBeTracedResponse, error) {
+func (c *callTraceClient) ShouldBeTraced(ctx context.Context, in *ShouldBeTracedRequest, opts ...grpc.CallOption) (*ShouldBeTracedResponse, error) {
 	out := new(ShouldBeTracedResponse)
-	err := c.cc.Invoke(ctx, "/envoy.extensions.filters.network.sip_proxy.v3.CallTrace/shoudBeTraced", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/envoy.extensions.filters.network.sip_proxy.v3.CallTrace/shouldBeTraced", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (c *callTraceClient) Trace(ctx context.Context, in *CallTraceRequest, opts 
 // All implementations must embed UnimplementedCallTraceServer
 // for forward compatibility
 type CallTraceServer interface {
-	ShoudBeTraced(context.Context, *ShouldBeTracedRequest) (*ShouldBeTracedResponse, error)
+	ShouldBeTraced(context.Context, *ShouldBeTracedRequest) (*ShouldBeTracedResponse, error)
 	Watch(*ShouldBeTracedRequest, CallTrace_WatchServer) error
 	Trace(context.Context, *CallTraceRequest) (*Bool, error)
 	mustEmbedUnimplementedCallTraceServer()
@@ -95,8 +95,8 @@ type CallTraceServer interface {
 type UnimplementedCallTraceServer struct {
 }
 
-func (UnimplementedCallTraceServer) ShoudBeTraced(context.Context, *ShouldBeTracedRequest) (*ShouldBeTracedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ShoudBeTraced not implemented")
+func (UnimplementedCallTraceServer) ShouldBeTraced(context.Context, *ShouldBeTracedRequest) (*ShouldBeTracedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ShouldBeTraced not implemented")
 }
 func (UnimplementedCallTraceServer) Watch(*ShouldBeTracedRequest, CallTrace_WatchServer) error {
 	return status.Errorf(codes.Unimplemented, "method Watch not implemented")
@@ -117,20 +117,20 @@ func RegisterCallTraceServer(s grpc.ServiceRegistrar, srv CallTraceServer) {
 	s.RegisterService(&CallTrace_ServiceDesc, srv)
 }
 
-func _CallTrace_ShoudBeTraced_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CallTrace_ShouldBeTraced_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ShouldBeTracedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CallTraceServer).ShoudBeTraced(ctx, in)
+		return srv.(CallTraceServer).ShouldBeTraced(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/envoy.extensions.filters.network.sip_proxy.v3.CallTrace/shoudBeTraced",
+		FullMethod: "/envoy.extensions.filters.network.sip_proxy.v3.CallTrace/shouldBeTraced",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CallTraceServer).ShoudBeTraced(ctx, req.(*ShouldBeTracedRequest))
+		return srv.(CallTraceServer).ShouldBeTraced(ctx, req.(*ShouldBeTracedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -182,8 +182,8 @@ var CallTrace_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CallTraceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "shoudBeTraced",
-			Handler:    _CallTrace_ShoudBeTraced_Handler,
+			MethodName: "shouldBeTraced",
+			Handler:    _CallTrace_ShouldBeTraced_Handler,
 		},
 		{
 			MethodName: "trace",

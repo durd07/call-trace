@@ -24,7 +24,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*100000)
 	defer cancel()
 
-	ret, err := c.ShoudBeTraced(ctx, &pb.ShoudBeTracedRequest{Puid:"sip:felix.du@nokia-sbell.com"})
+	ret, err := c.ShouldBeTraced(ctx, &pb.ShouldBeTracedRequest{Puid:"sip:felix.du@nokia-sbell.com"})
 	if err != nil {
 		log.Println("ShoudBeTraced failed", err)
 	}
