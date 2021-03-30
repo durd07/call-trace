@@ -18,8 +18,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CallTraceClient interface {
-	ShoudBeTraced(ctx context.Context, in *String, opts ...grpc.CallOption) (*Bool, error)
-	Watch(ctx context.Context, in *String, opts ...grpc.CallOption) (CallTrace_WatchClient, error)
+	ShoudBeTraced(ctx context.Context, in *ShouldBeTracedRequest, opts ...grpc.CallOption) (*ShouldBeTracedResponse, error)
+	Watch(ctx context.Context, in *ShouldBeTracedRequest, opts ...grpc.CallOption) (CallTrace_WatchClient, error)
 	Trace(ctx context.Context, in *CallTraceRequest, opts ...grpc.CallOption) (*Bool, error)
 }
 
@@ -31,8 +31,8 @@ func NewCallTraceClient(cc grpc.ClientConnInterface) CallTraceClient {
 	return &callTraceClient{cc}
 }
 
-func (c *callTraceClient) ShoudBeTraced(ctx context.Context, in *String, opts ...grpc.CallOption) (*Bool, error) {
-	out := new(Bool)
+func (c *callTraceClient) ShoudBeTraced(ctx context.Context, in *ShouldBeTracedRequest, opts ...grpc.CallOption) (*ShouldBeTracedResponse, error) {
+	out := new(ShouldBeTracedResponse)
 	err := c.cc.Invoke(ctx, "/envoy.extensions.filters.network.sip_proxy.v3.CallTrace/shoudBeTraced", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (c *callTraceClient) ShoudBeTraced(ctx context.Context, in *String, opts ..
 	return out, nil
 }
 
-func (c *callTraceClient) Watch(ctx context.Context, in *String, opts ...grpc.CallOption) (CallTrace_WatchClient, error) {
+func (c *callTraceClient) Watch(ctx context.Context, in *ShouldBeTracedRequest, opts ...grpc.CallOption) (CallTrace_WatchClient, error) {
 	stream, err := c.cc.NewStream(ctx, &CallTrace_ServiceDesc.Streams[0], "/envoy.extensions.filters.network.sip_proxy.v3.CallTrace/watch", opts...)
 	if err != nil {
 		return nil, err
@@ -85,8 +85,8 @@ func (c *callTraceClient) Trace(ctx context.Context, in *CallTraceRequest, opts 
 // All implementations must embed UnimplementedCallTraceServer
 // for forward compatibility
 type CallTraceServer interface {
-	ShoudBeTraced(context.Context, *String) (*Bool, error)
-	Watch(*String, CallTrace_WatchServer) error
+	ShoudBeTraced(context.Context, *ShouldBeTracedRequest) (*ShouldBeTracedResponse, error)
+	Watch(*ShouldBeTracedRequest, CallTrace_WatchServer) error
 	Trace(context.Context, *CallTraceRequest) (*Bool, error)
 	mustEmbedUnimplementedCallTraceServer()
 }
@@ -95,10 +95,10 @@ type CallTraceServer interface {
 type UnimplementedCallTraceServer struct {
 }
 
-func (UnimplementedCallTraceServer) ShoudBeTraced(context.Context, *String) (*Bool, error) {
+func (UnimplementedCallTraceServer) ShoudBeTraced(context.Context, *ShouldBeTracedRequest) (*ShouldBeTracedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ShoudBeTraced not implemented")
 }
-func (UnimplementedCallTraceServer) Watch(*String, CallTrace_WatchServer) error {
+func (UnimplementedCallTraceServer) Watch(*ShouldBeTracedRequest, CallTrace_WatchServer) error {
 	return status.Errorf(codes.Unimplemented, "method Watch not implemented")
 }
 func (UnimplementedCallTraceServer) Trace(context.Context, *CallTraceRequest) (*Bool, error) {
@@ -118,7 +118,7 @@ func RegisterCallTraceServer(s grpc.ServiceRegistrar, srv CallTraceServer) {
 }
 
 func _CallTrace_ShoudBeTraced_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(String)
+	in := new(ShouldBeTracedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -130,13 +130,13 @@ func _CallTrace_ShoudBeTraced_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/envoy.extensions.filters.network.sip_proxy.v3.CallTrace/shoudBeTraced",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CallTraceServer).ShoudBeTraced(ctx, req.(*String))
+		return srv.(CallTraceServer).ShoudBeTraced(ctx, req.(*ShouldBeTracedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _CallTrace_Watch_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(String)
+	m := new(ShouldBeTracedRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}

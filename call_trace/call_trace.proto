@@ -9,8 +9,12 @@ package envoy.extensions.filters.network.sip_proxy.v3;
 
 service CallTrace {
 	rpc shoudBeTraced(ShouldBeTracedRequest) returns (ShouldBeTracedResponse) {}
-	rpc watch(String) returns (stream WatchResponse) {}
+	rpc watch(ShouldBeTracedRequest) returns (stream WatchResponse) {}
 	rpc trace(CallTraceRequest) returns (Bool) {}
+}
+
+message Bool {
+	bool value = 1;
 }
 
 message ShouldBeTracedRequest {
