@@ -29,9 +29,9 @@ func main() {
 		log.Println("ShoudBeTraced failed", err)
 	}
 
-	log.Printf("received: ", ret.Trace_id)
+	log.Printf("received: ", ret.TraceId)
 
-	ret, err = c.Trace(ctx, &pb.CallTraceRequest{Puid: "sip:felix.du@nokia-sbell.com", Trace_id: ret.Trace_id, Msg: "123456"})
+	ret, err = c.Trace(ctx, &pb.CallTraceRequest{Puid: "sip:felix.du@nokia-sbell.com", TraceId: ret.TraceId, Msg: "123456"})
 
 	if err != nil {
 		log.Println("Trace failed", err)
