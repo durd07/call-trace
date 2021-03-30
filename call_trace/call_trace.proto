@@ -8,22 +8,24 @@ option java_outer_classname = "CallTraceProto";
 package envoy.extensions.filters.network.sip_proxy.v3;
 
 service CallTrace {
-	rpc shoudBeTraced(String) returns (Bool) {}
+	rpc shoudBeTraced(ShouldBeTracedRequest) returns (ShouldBeTracedResponse) {}
 	rpc watch(String) returns (stream WatchResponse) {}
 	rpc trace(CallTraceRequest) returns (Bool) {}
 }
 
-message String {
-	string value = 1;
+message ShouldBeTracedRequest {
+	string puid = 1;
 }
 
-message Bool {
-	bool value = 1;
+message ShouldBeTracedResponse {
+	int32 trace_id = 1;
 }
 
 message CallTraceRequest {
-	string puid = 1;
-	string msg = 2;
+	string trace_id = 1;
+	string puid = 2;
+	string timestamp = 3;
+	string msg = 4;
 }
 
 message WatchResponse {

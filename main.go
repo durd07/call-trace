@@ -26,6 +26,7 @@ import (
 
 var (
 	eng *engine.Engine
+	trace_id uint32
 )
 
 func httpServer() {
@@ -77,16 +78,17 @@ type server struct {
 	pb.UnimplementedCallTraceServer
 }
 
-func (s *server) ShoudBeTraced(ctx context.Context, in *pb.String) (*pb.Bool, error) {
+func (s *server) ShoudBeTraced(ctx context.Context, in *pb.ShoudBeTracedRequest) (*pb.ShoudBeTracedResponse, error) {
 	p, _ := peer.FromContext(ctx)
-	logger.Infof("GRPC shoudBeTraced received from %s : %v", p.Addr.String(), in.Value)
+	logger.Infof("GRPC shoudBeTraced received from %s : %v", p.Addr.String(), in.Puid)
 
-	query := fmt.Sprintf("SELECT 1 FROM call_trace_config WHERE public_id='%s'", in.Value)
+	query := fmt.Sprintf("SELECT 1 FROM call_trace_config WHERE public_id='%s'", in.Puid)
 	ret, err := eng.MysqlConnection().Query(query)
 	if ret != nil {
-		return &pb.Bool{Value: true}, err
+		return &pb.ShoudBeTracedResponse{Trace_id: 0}, err
 	} else {
-		return &pb.Bool{Value: false}, err
+		trace_id++
+		return &pb.ShoudBeTracedResponse{Trace_id: (trace_id)}, err
 	}
 
 }

@@ -15,16 +15,18 @@ func GetCallTraceTable(ctx *context.Context) table.Table {
 
 	info.AddField("Id", "id", db.Int).
 		FieldFilterable()
+	info.AddField("Trace_reference_id", "trace_reference_id", db.Varchar)
 	info.AddField("Public_id", "public_id", db.Varchar)
-	info.AddField("Timestamp", "timestamp", db.Varchar)
+	info.AddField("Timestamp", "timestamp", db.Timestamp)
 	info.AddField("Message", "message", db.Varchar)
 
 	info.SetTable("call_trace").SetTitle("CallTrace").SetDescription("CallTrace")
 
 	formList := callTrace.GetForm()
 	formList.AddField("Id", "id", db.Int, form.Default)
+	formList.AddField("Trace_reference_id", "trace_reference_id", db.Varchar, form.Text)
 	formList.AddField("Public_id", "public_id", db.Varchar, form.Text)
-	formList.AddField("Timestamp", "timestamp", db.Varchar, form.Text)
+	formList.AddField("Timestamp", "timestamp", db.Timestamp, form.Datetime)
 	formList.AddField("Message", "message", db.Varchar, form.Text)
 
 	formList.SetTable("call_trace").SetTitle("CallTrace").SetDescription("CallTrace")

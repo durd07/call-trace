@@ -24,14 +24,14 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*100000)
 	defer cancel()
 
-	ret, err := c.ShoudBeTraced(ctx, &pb.String{Value:"sip:felix.du@nokia-sbell.com"})
+	ret, err := c.ShoudBeTraced(ctx, &pb.ShoudBeTracedRequest{Puid:"sip:felix.du@nokia-sbell.com"})
 	if err != nil {
 		log.Println("ShoudBeTraced failed", err)
 	}
 
-	log.Printf("received: ", ret.Value)
+	log.Printf("received: ", ret.Trace_id)
 
-	ret, err = c.Trace(ctx, &pb.CallTraceRequest{Puid: "sip:felix.du@nokia-sbell.com", Msg: "123456"})
+	ret, err = c.Trace(ctx, &pb.CallTraceRequest{Puid: "sip:felix.du@nokia-sbell.com", Trace_id: ret.Trace_id, Msg: "123456"})
 
 	if err != nil {
 		log.Println("Trace failed", err)
