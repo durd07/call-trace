@@ -31,12 +31,12 @@ func main() {
 
 	log.Printf("received: ", ret.TraceId)
 
-	ret, err = c.Trace(ctx, &pb.CallTraceRequest{Puid: "sip:felix.du@nokia-sbell.com", TraceId: ret.TraceId, Msg: "123456"})
+	trace_ret, err := c.Trace(ctx, &pb.CallTraceRequest{Puid: "sip:felix.du@nokia-sbell.com", TraceId: ret.TraceId, Msg: "123456"})
 
 	if err != nil {
 		log.Println("Trace failed", err)
 	}
 
-	log.Printf("received: ", ret.Value)
+	log.Printf("received: ", trace_ret.Value)
 
 }
