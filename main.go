@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"net/http"
 	"context"
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"              // 适配器
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql" // sql 驱动
@@ -24,9 +25,16 @@ import (
 	pb "github.com/durd07/call-trace/call_trace"
 )
 
+type TraceRequest struct {
+	Puid string `json:"puid"`
+	Trace_id int32 `json:"trace_id"`
+	Timestamp string `json:"timestamp"`
+	Msg string `json: "msg"`
+}
+
 var (
 	eng *engine.Engine
-	trace_id int32
+	trace_id int32 = 1
 )
 
 func httpServer() {
@@ -65,6 +73,40 @@ func httpServer() {
 
 	r.Static("/uploads", "./uploads")
 
+	r.GET("/should-be-traced", func(c *gin.Context) {
+		puid := c.Query("puid")
+		query := fmt.Sprintf("SELECT 1 FROM call_trace_config WHERE public_id='%s'", puid)
+		_, err := eng.MysqlConnection().Query(query)
+		if err != nil {
+			c.JSON(http.StatusNotFound, map[string]string{"error": err.Error()})
+		} else {
+			trace_id++
+			c.JSON(http.StatusOK, map[string]int32{"trace_id": trace_id})
+		}
+	})
+
+	r.POST("/trace", func(c *gin.Context) {
+		var req TraceRequest
+		err := c.BindJSON(&req)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+		}
+		fmt.Printf("%v\n", req)
+
+		query := fmt.Sprintf("INSERT INTO call_trace (trace_reference_id, public_id, timestamp, message) VALUES ('%d', '%s', '%s', '%s')", req.Trace_id, req.Puid, req.Timestamp, req.Msg)
+		fmt.Println(query)
+
+		ret, err := eng.MysqlConnection().Exec(query)
+
+		fmt.Printf("%v\n", ret)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		} else {
+			c.JSON(http.StatusOK, map[string]string{})
+		}
+	})
+
 	eng.HTML("GET", "/admin", datamodel.GetContent)
 	//eng.HTML("POST", "/admin/info/call_trace", datamodel.GetContent)
 	//ret, _ := eng.MysqlConnection().Query("select * from call_trace")
@@ -97,7 +139,7 @@ func (s *server) Trace(ctx context.Context, in *pb.CallTraceRequest) (*pb.Bool, 
 	p, _ := peer.FromContext(ctx)
 	logger.Infof("GRPC trace received from %s : %v", p.Addr.String(), in.Puid)
 
-	query := fmt.Sprintf("INSERT INTO call_trace (public_id, message) VALUES ('%s', '%s')", in.Puid, in.Msg)
+	query := fmt.Sprintf("INSERT INTO call_trace (trace_reference_id, public_id, timestamp, message) VALUES ('%d', '%s', '%s', '%s')", in.TraceId, in.Puid, in.Timestamp, in.Msg)
 
 	ret, err := eng.MysqlConnection().Exec(query)
 
