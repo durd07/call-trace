@@ -15,8 +15,8 @@ services:
     container_name: calltrace-service
     restart: always
     ports:
-      - "9035:9033"
-      - "9036:9034"
+      - "9033:9033"
+      - "9034:9034"
     links:
       - db:db
 
