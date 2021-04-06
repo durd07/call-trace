@@ -51,7 +51,7 @@ func httpServer() {
 	if err := eng.AddConfig(config.Config{
 		Databases: config.DatabaseList{
 			"default": {
-				Host:       "db",
+				Host:       "127.0.0.1",
 				Port:       "3306",
 				User:       "root",
 				Pwd:        "root",
@@ -76,9 +76,11 @@ func httpServer() {
 	r.GET("/should-be-traced", func(c *gin.Context) {
 		puid := c.Query("puid")
 		query := fmt.Sprintf("SELECT 1 FROM call_trace_config WHERE public_id='%s'", puid)
-		_, err := eng.MysqlConnection().Query(query)
+		ret, err := eng.MysqlConnection().Query(query)
 		if err != nil {
 			c.JSON(http.StatusNotFound, map[string]string{"error": err.Error()})
+		} else if len(ret) == 0 {
+			c.JSON(http.StatusNotFound, map[string]interface{}{})
 		} else {
 			trace_id++
 			c.JSON(http.StatusOK, map[string]int32{"trace_id": trace_id})
@@ -112,7 +114,7 @@ func httpServer() {
 	//ret, _ := eng.MysqlConnection().Query("select * from call_trace")
 	//fmt.Println(ret)
 
-	_ = r.Run(":9033")
+	_ = r.Run(":9035")
 }
 
 // server is used to implement helloworld.GreeterServer.
@@ -126,13 +128,14 @@ func (s *server) ShouldBeTraced(ctx context.Context, in *pb.ShouldBeTracedReques
 
 	query := fmt.Sprintf("SELECT 1 FROM call_trace_config WHERE public_id='%s'", in.Puid)
 	ret, err := eng.MysqlConnection().Query(query)
-	if ret != nil {
+	if err != nil {
+		return &pb.ShouldBeTracedResponse{TraceId: 0}, err
+	} else if len(ret) == 0 {
 		return &pb.ShouldBeTracedResponse{TraceId: 0}, err
 	} else {
 		trace_id++
 		return &pb.ShouldBeTracedResponse{TraceId: trace_id}, err
 	}
-
 }
 
 func (s *server) Trace(ctx context.Context, in *pb.CallTraceRequest) (*pb.Bool, error) {
@@ -153,7 +156,7 @@ func (s *server) Trace(ctx context.Context, in *pb.CallTraceRequest) (*pb.Bool, 
 }
 
 func grpcServer() {
-	lis, err := net.Listen("tcp", ":9034")
+	lis, err := net.Listen("tcp", ":9036")
 	if err != nil {
 		logger.Fatalf("failed to listen: %v", err)
 	}
