@@ -1,0 +1,6 @@
+FROM mariadb:10.5.9
+
+COPY ./mariadb-root /root
+
+RUN chmod +x /root/init_db.sh
+RUN /root/init_db.sh

@@ -51,7 +51,7 @@ func httpServer() {
 	if err := eng.AddConfig(config.Config{
 		Databases: config.DatabaseList{
 			"default": {
-				Host:       "127.0.0.1",
+				Host:       "db",
 				Port:       "3306",
 				User:       "root",
 				Pwd:        "root",

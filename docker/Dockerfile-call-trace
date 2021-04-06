@@ -1,0 +1,4 @@
+FROM fedora:33
+
+COPY ./call-trace /root/
+ENTRYPOINT /root/call-trace

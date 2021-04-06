@@ -1,0 +1,26 @@
+version: '3'
+services:
+  db:
+    image: durd07/goadmin-mariadb:latest
+    container_name: calltrace-mariadb
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=call_trace
+    expose:
+      - 3306
+
+  service:
+    image: durd07/goadmin-calltrace:latest
+    container_name: calltrace-service
+    restart: always
+    ports:
+      - "9035:9033"
+      - "9036:9034"
+    links:
+      - db:db
+
+networks:
+  default:
+    driver:
+      bridge
