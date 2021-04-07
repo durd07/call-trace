@@ -1,0 +1,4 @@
+FROM fedora:33
+
+COPY ./subscriber-tracing /root/
+ENTRYPOINT /root/subscriber-tracing
