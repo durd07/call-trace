@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriber-tracing
+spec:
+  selector:
+    matchLabels:
+      run: subscriber-tracing
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: subscriber-tracing
+    spec:
+      containers:
+      - name: subscriber-tracing
+        image: durd07/subscriber-tracing:latest
+        ports:
+        - containerPort: 9033
+        - containerPort: 9034
+      - name: mariadb
+        image: durd07/subscriber-tracing-db:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: subscriber-tracing
+  labels:
+    run: subscriber-tracing
+spec:
+  type: NodePort
+  ports:
+  - port: 9033
+    targetPort: 9033
+    protocol: TCP
+    name: http
+  - port: 9034
+    protocol: TCP
+    targetPort: 9034
+    name: grpc
+  selector:
+    run: subscriber-tracing

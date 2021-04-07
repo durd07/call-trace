@@ -12,12 +12,16 @@ import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 //
 // "call_trace" => http://localhost:9033/admin/info/call_trace
 // "call_trace_config" => http://localhost:9033/admin/info/call_trace_config
+// "subscriber_tracing" => http://localhost:9033/admin/info/subscriber_tracing
+// "subscriber_tracing_config" => http://localhost:9033/admin/info/subscriber_tracing_config
 //
 // example end
 var Generators = map[string]table.Generator{
 
-	"call_trace":        GetCallTraceTable,
-	"call_trace_config": GetCallTraceConfigTable,
+	"call_trace":                GetCallTraceTable,
+	"call_trace_config":         GetCallTraceConfigTable,
+	"subscriber_tracing":        GetSubscriberTracingTable,
+	"subscriber_tracing_config": GetSubscriberTracingConfigTable,
 
 	// generators end
 }

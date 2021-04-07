@@ -21,7 +21,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 
-	pb "github.com/durd07/call-trace/call_trace"
+	pb "github.com/durd07/subscriber-tracing/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/peer"
 
@@ -92,7 +92,7 @@ func httpServer() {
 
 	r.GET("/trace_id", func(c *gin.Context) {
 		puid := c.Query("supi")
-		query := fmt.Sprintf("SELECT 1 FROM call_trace_config WHERE public_id='%s'", puid)
+		query := fmt.Sprintf("SELECT 1 FROM subscriber_tracing_config WHERE supi='%s'", puid)
 		ret, err := eng.MysqlConnection().Query(query)
 		if err != nil {
 			c.Header("Trace-Id", "0")
@@ -115,7 +115,7 @@ func httpServer() {
 		}
 		fmt.Printf("%v\n", req)
 
-		query := fmt.Sprintf("INSERT INTO call_trace (trace_reference_id, public_id, timestamp, message) VALUES ('%d', '%s', '%s', '%s')", req.TraceId, req.Supi, req.Timestamp, req.Message)
+		query := fmt.Sprintf("INSERT INTO subscriber_tracing (trace_reference_id, supi, timestamp, message) VALUES ('%d', '%s', '%s', '%s')", req.TraceId, req.Supi, req.Timestamp, req.Message)
 		fmt.Println(query)
 
 		ret, err := eng.MysqlConnection().Exec(query)
@@ -139,30 +139,30 @@ func httpServer() {
 
 // server is used to implement helloworld.GreeterServer.
 type server struct {
-	pb.UnimplementedCallTraceServer
+	pb.UnimplementedSubscriberTracingServer
 }
 
-func (s *server) ShouldBeTraced(ctx context.Context, in *pb.ShouldBeTracedRequest) (*pb.ShouldBeTracedResponse, error) {
+func (s *server) ShouldBeTraced(ctx context.Context, in *pb.TraceIdRequest) (*pb.TraceIdResponse, error) {
 	p, _ := peer.FromContext(ctx)
-	logger.Infof("GRPC shoudBeTraced received from %s : %v", p.Addr.String(), in.Puid)
+	logger.Infof("GRPC shoudBeTraced received from %s : %v", p.Addr.String(), in.Supi)
 
-	query := fmt.Sprintf("SELECT 1 FROM call_trace_config WHERE public_id='%s'", in.Puid)
+	query := fmt.Sprintf("SELECT 1 FROM subscriber_tracing_config WHERE supi='%s'", in.Supi)
 	ret, err := eng.MysqlConnection().Query(query)
 	if err != nil {
-		return &pb.ShouldBeTracedResponse{TraceId: 0}, err
+		return &pb.TraceIdResponse{TraceId: 0}, err
 	} else if len(ret) == 0 {
-		return &pb.ShouldBeTracedResponse{TraceId: 0}, err
+		return &pb.TraceIdResponse{TraceId: 0}, err
 	} else {
 		trace_id++
-		return &pb.ShouldBeTracedResponse{TraceId: trace_id}, err
+		return &pb.TraceIdResponse{TraceId: trace_id}, err
 	}
 }
 
-func (s *server) Trace(ctx context.Context, in *pb.CallTraceRequest) (*pb.Bool, error) {
+func (s *server) Trace(ctx context.Context, in *pb.SubscriberTracingRequest) (*pb.Bool, error) {
 	p, _ := peer.FromContext(ctx)
-	logger.Infof("GRPC trace received from %s : %v", p.Addr.String(), in.Puid)
+	logger.Infof("GRPC trace received from %s : %v", p.Addr.String(), in.Supi)
 
-	query := fmt.Sprintf("INSERT INTO call_trace (trace_reference_id, public_id, timestamp, message) VALUES ('%d', '%s', '%s', '%s')", in.TraceId, in.Puid, in.Timestamp, in.Msg)
+	query := fmt.Sprintf("INSERT INTO subscriber_tracing (trace_reference_id, supi, timestamp, message) VALUES ('%d', '%s', '%s', '%s')", in.TraceId, in.Supi, in.Timestamp, in.Msg)
 
 	ret, err := eng.MysqlConnection().Exec(query)
 
@@ -183,7 +183,7 @@ func grpcServer() {
 	s := grpc.NewServer()
 	myserver := server{}
 
-	pb.RegisterCallTraceServer(s, &myserver)
+	pb.RegisterSubscriberTracingServer(s, &myserver)
 	if err := s.Serve(lis); err != nil {
 		logger.Fatalf("failed to serve: %v", err)
 	}

@@ -1,4 +1,4 @@
-module github.com/durd07/call-trace
+module github.com/durd07/subscriber-tracing
 
 go 1.15
 

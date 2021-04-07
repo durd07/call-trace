@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option go_package = "github.com/durd07/subscriber_tracing";
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.subscriber_tracing";
+option java_outer_classname = "SubscriberTracingProto";
+
+package subscribertracing.v1;
+
+service SubscriberTracing {
+	rpc trace_id(TraceIdRequest) returns (TraceIdResponse) {}
+	//rpc watch(TraceIdRequest) returns (stream WatchResponse) {}
+	rpc sub_trace(SubscriberTracingRequest) returns (Bool) {}
+}
+
+message Bool {
+	bool value = 1;
+}
+
+message TraceIdRequest {
+	string supi = 1;
+}
+
+message TraceIdResponse {
+	int32 trace_id = 1;
+}
+
+message SubscriberTracingRequest {
+	int32 trace_id = 1;
+	string supi = 2;
+	string timestamp = 3;
+	string msg = 4;
+}
+
+message WatchResponse {
+	repeated string supi = 1;
+}

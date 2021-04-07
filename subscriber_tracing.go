@@ -7,29 +7,29 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
-func GetCallTraceTable(ctx *context.Context) table.Table {
+func GetSubscriberTracingTable(ctx *context.Context) table.Table {
 
-	callTrace := table.NewDefaultTable(table.DefaultConfigWithDriver("mysql"))
+	subscriberTracing := table.NewDefaultTable(table.DefaultConfigWithDriver("mysql"))
 
-	info := callTrace.GetInfo().HideFilterArea()
+	info := subscriberTracing.GetInfo().HideFilterArea()
 
 	info.AddField("Id", "id", db.Int).
 		FieldFilterable()
 	info.AddField("Trace_reference_id", "trace_reference_id", db.Varchar)
-	info.AddField("Public_id", "public_id", db.Varchar)
+	info.AddField("Supi", "supi", db.Varchar)
 	info.AddField("Timestamp", "timestamp", db.Timestamp)
 	info.AddField("Message", "message", db.Varchar)
 
-	info.SetTable("call_trace").SetTitle("CallTrace").SetDescription("CallTrace")
+	info.SetTable("subscriber_tracing").SetTitle("SubscriberTracing").SetDescription("SubscriberTracing")
 
-	formList := callTrace.GetForm()
+	formList := subscriberTracing.GetForm()
 	formList.AddField("Id", "id", db.Int, form.Default)
 	formList.AddField("Trace_reference_id", "trace_reference_id", db.Varchar, form.Text)
-	formList.AddField("Public_id", "public_id", db.Varchar, form.Text)
+	formList.AddField("Supi", "supi", db.Varchar, form.Text)
 	formList.AddField("Timestamp", "timestamp", db.Timestamp, form.Datetime)
 	formList.AddField("Message", "message", db.Varchar, form.Text)
 
-	formList.SetTable("call_trace").SetTitle("CallTrace").SetDescription("CallTrace")
+	formList.SetTable("subscriber_tracing").SetTitle("SubscriberTracing").SetDescription("SubscriberTracing")
 
-	return callTrace
+	return subscriberTracing
 }
