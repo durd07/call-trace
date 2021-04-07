@@ -51,7 +51,7 @@ func httpServer() {
 	if err := eng.AddConfig(config.Config{
 		Databases: config.DatabaseList{
 			"default": {
-				Host:       "127.0.0.1",
+				Host:       "db",
 				Port:       "3306",
 				User:       "root",
 				Pwd:        "root",
@@ -78,12 +78,12 @@ func httpServer() {
 		query := fmt.Sprintf("SELECT 1 FROM call_trace_config WHERE public_id='%s'", puid)
 		ret, err := eng.MysqlConnection().Query(query)
 		if err != nil {
-			c.JSON(http.StatusNotFound, map[string]string{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		} else if len(ret) == 0 {
 			c.JSON(http.StatusNotFound, map[string]interface{}{})
 		} else {
 			trace_id++
-			c.JSON(http.StatusOK, map[string]int32{"trace_id": trace_id})
+			c.JSON(http.StatusOK, map[string]interface{}{"trace_id": trace_id})
 		}
 	})
 
@@ -114,7 +114,7 @@ func httpServer() {
 	//ret, _ := eng.MysqlConnection().Query("select * from call_trace")
 	//fmt.Println(ret)
 
-	_ = r.Run(":9035")
+	_ = r.Run(":9033")
 }
 
 // server is used to implement helloworld.GreeterServer.
@@ -156,7 +156,7 @@ func (s *server) Trace(ctx context.Context, in *pb.CallTraceRequest) (*pb.Bool, 
 }
 
 func grpcServer() {
-	lis, err := net.Listen("tcp", ":9036")
+	lis, err := net.Listen("tcp", ":9034")
 	if err != nil {
 		logger.Fatalf("failed to listen: %v", err)
 	}

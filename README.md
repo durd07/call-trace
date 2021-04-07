@@ -9,10 +9,20 @@ refer to http://discuss.go-admin.com/t/goadmin-golang/17
    ```
    response on success
    ```
+   200 OK
+
    {"trace_id":2}
+   ```
+   response on not found
+   ```
+   404 Not Found
+
+   {}
    ```
    response on error
    ```
+   500 Internal Server Error
+
    {"error":"error string"}
    ```
 
