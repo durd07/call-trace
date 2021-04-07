@@ -20,6 +20,11 @@ spec:
         - containerPort: 9034
       - name: mariadb
         image: durd07/subscriber-tracing-db:latest
+        env:
+        - name: MYSQL_DATABASE
+          value: subscriber_tracing
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
 ---
 apiVersion: v1
 kind: Service

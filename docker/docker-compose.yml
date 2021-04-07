@@ -1,18 +1,20 @@
 version: '3'
 services:
   db:
-    image: durd07/goadmin-mariadb:latest
-    container_name: calltrace-mariadb
+    image: durd07/subscriber-tracing-db:latest
+    container_name: subscriber-tracing-db
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=call_trace
+      - MYSQL_DATABASE=subscriber_tracing
     expose:
       - 3306
 
   service:
-    image: durd07/goadmin-calltrace:latest
-    container_name: calltrace-service
+    image: durd07/subscriber-tracing:latest
+    container_name: subscriber-tracing
+    environment:
+      - MYSQL_HOST=db
     restart: always
     ports:
       - "9033:9033"
