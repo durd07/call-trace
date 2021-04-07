@@ -18,8 +18,6 @@ import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 // example end
 var Generators = map[string]table.Generator{
 
-	"call_trace":                GetCallTraceTable,
-	"call_trace_config":         GetCallTraceConfigTable,
 	"subscriber_tracing":        GetSubscriberTracingTable,
 	"subscriber_tracing_config": GetSubscriberTracingConfigTable,
 

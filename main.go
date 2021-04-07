@@ -34,7 +34,7 @@ type envconfig struct {
 		Port int `default:"3306"`
 		User string `default:"root"`
 		Pwd  string `default:"root"`
-		Name string `default:"call_trace"`
+		Name string `default:"subscriber_tracing"`
 	}
 	HTTPPort int `default:"9033"`
 	GRPCPort int `default:"9034"`
@@ -72,7 +72,7 @@ func httpServer() {
 				Port:       strconv.Itoa(cfg.MySQL.Port),
 				User:       cfg.MySQL.User,
 				Pwd:        cfg.MySQL.Pwd,
-				Name:       "call_trace",
+				Name:       cfg.MySQL.Name,
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
 				Driver:     db.DriverMysql,
