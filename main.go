@@ -101,9 +101,9 @@ func httpServer() {
 			c.Header("Trace-Id", "0")
 			c.JSON(http.StatusNotFound, map[string]interface{}{"trace_id": 0})
 		} else {
-			trace_id++
 			c.Header("Trace-Id", strconv.Itoa(int(trace_id)))
 			c.JSON(http.StatusOK, map[string]interface{}{"trace_id": trace_id})
+			trace_id++
 		}
 	})
 
