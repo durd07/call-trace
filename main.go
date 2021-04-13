@@ -115,7 +115,14 @@ func httpServer() {
 		}
 		fmt.Printf("%v\n", req)
 
-		query := fmt.Sprintf("INSERT INTO subscriber_tracing (trace_reference_id, supi, timestamp, message) VALUES ('%d', '%s', '%s', '%s')", req.TraceId, req.Supi, req.Timestamp, req.Message)
+		query := ""
+		timestamp, err := strconv.Atoi(req.Timestamp)
+		if err != nil {
+			query = fmt.Sprintf("INSERT INTO subscriber_tracing (trace_reference_id, supi, timestamp, address, message) VALUES ('%d', '%s', '%s', '%s', '%s')", req.TraceId, req.Supi, req.Timestamp, req.Addr, req.Message)
+		} else {
+			query = fmt.Sprintf("INSERT INTO subscriber_tracing (trace_reference_id, supi, timestamp, address, message) VALUES ('%d', '%s', FROM_UNIXTIME(%0.6f), '%s', '%s')", req.TraceId, req.Supi, float64(timestamp) / 1000000000, req.Addr, req.Message)
+		}
+
 		fmt.Println(query)
 
 		ret, err := eng.MysqlConnection().Exec(query)
@@ -130,9 +137,6 @@ func httpServer() {
 	})
 
 	eng.HTML("GET", "/admin", datamodel.GetContent)
-	//eng.HTML("POST", "/admin/info/call_trace", datamodel.GetContent)
-	//ret, _ := eng.MysqlConnection().Query("select * from call_trace")
-	//fmt.Println(ret)
 
 	_ = r.Run(":"+strconv.Itoa(cfg.HTTPPort))
 }

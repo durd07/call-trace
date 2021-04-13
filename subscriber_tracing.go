@@ -18,6 +18,7 @@ func GetSubscriberTracingTable(ctx *context.Context) table.Table {
 	info.AddField("Trace_reference_id", "trace_reference_id", db.Varchar)
 	info.AddField("Supi", "supi", db.Varchar)
 	info.AddField("Timestamp", "timestamp", db.Timestamp)
+	info.AddField("Address", "address", db.Varchar)
 	info.AddField("Message", "message", db.Varchar)
 
 	info.SetTable("subscriber_tracing").SetTitle("SubscriberTracing").SetDescription("SubscriberTracing")
@@ -27,6 +28,7 @@ func GetSubscriberTracingTable(ctx *context.Context) table.Table {
 	formList.AddField("Trace_reference_id", "trace_reference_id", db.Varchar, form.Text)
 	formList.AddField("Supi", "supi", db.Varchar, form.Text)
 	formList.AddField("Timestamp", "timestamp", db.Timestamp, form.Datetime)
+	formList.AddField("Address", "address", db.Varchar, form.Text)
 	formList.AddField("Message", "message", db.Varchar, form.Text)
 
 	formList.SetTable("subscriber_tracing").SetTitle("SubscriberTracing").SetDescription("SubscriberTracing")

@@ -325,7 +325,7 @@ CREATE TABLE `goadmin_users` (
 
 LOCK TABLES `goadmin_users` WRITE;
 /*!40000 ALTER TABLE `goadmin_users` DISABLE KEYS */;
-INSERT INTO `goadmin_users` VALUES (1,'admin','$2a$10$.RbrlvW8XcLbgL5JpDWz4OeFsPi.0glpgL2pphfsDHIqizb7NHzI6','admin','','tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh','2019-09-10 00:00:00','2019-09-10 00:00:00'),(2,'operator','$2a$10$rVqkOzHjN2MdlEprRflb1eGP0oZXuSrbJLOmJagFsCd81YZm0bsh.','Operator','',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),(3,'felixdu','$2a$10$69YKiqdwUhcNRUSZOBIkWu7q8koN7M/7UywHh.U/fg0m4oR/ym44W','Felix Du','',NULL,'2021-03-30 00:55:56','2021-03-30 00:55:56');
+INSERT INTO `goadmin_users` VALUES (1,'admin','$2a$10$.RbrlvW8XcLbgL5JpDWz4OeFsPi.0glpgL2pphfsDHIqizb7NHzI6','admin','','tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh','2019-09-10 00:00:00','2019-09-10 00:00:00'),(2,'operator','$2a$10$rVqkOzHjN2MdlEprRflb1eGP0oZXuSrbJLOmJagFsCd81YZm0bsh.','Operator','',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00');
 /*!40000 ALTER TABLE `goadmin_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -341,9 +341,10 @@ CREATE TABLE `subscriber_tracing` (
   `trace_reference_id` varchar(100) DEFAULT NULL,
   `supi` varchar(100) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
+  `address` varchar(100) DEFAULT NULL,
   `message` varchar(10240) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -388,4 +389,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-07 15:34:31
+-- Dump completed on 2021-04-13  2:56:15
