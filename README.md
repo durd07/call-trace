@@ -1,5 +1,5 @@
 # Subscriber Tracing Server
-refer to http://discuss.go-admin.com/t/goadmin-golang/17
+refer to http://discuss.go-admin.com/t/goadmin-golang/17, based on goadmin
 
 ## API
 1. query puid should be traced
