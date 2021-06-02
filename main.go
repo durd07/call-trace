@@ -136,6 +136,24 @@ func httpServer() {
 		}
 	})
 
+	r.POST("/sipmsg_report", func(c *gin.Context) {
+		body, err := ioutil.ReadAll(c.Request.Body)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+		} else {
+			query := fmt.Sprintf("INSERT INTO sipmsg_report (message) VALUES ('%s')", string(body))
+			ret, err := eng.MysqlConnection().Exec(query)
+
+			fmt.Printf("%v %v\n", query, ret)
+
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			} else {
+				c.JSON(http.StatusOK, map[string]string{})
+			}
+		}
+	})
+
 	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	_ = r.Run(":"+strconv.Itoa(cfg.HTTPPort))

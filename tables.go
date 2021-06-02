@@ -14,12 +14,14 @@ import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 // "call_trace_config" => http://localhost:9033/admin/info/call_trace_config
 // "subscriber_tracing" => http://localhost:9033/admin/info/subscriber_tracing
 // "subscriber_tracing_config" => http://localhost:9033/admin/info/subscriber_tracing_config
+// "sipmsg_report" => http://localhost:9033/admin/info/sipmsg_report
 //
 // example end
 var Generators = map[string]table.Generator{
 
 	"subscriber_tracing":        GetSubscriberTracingTable,
 	"subscriber_tracing_config": GetSubscriberTracingConfigTable,
+	"sipmsg_report":             GetSipmsgReportTable,
 
 	// generators end
 }
